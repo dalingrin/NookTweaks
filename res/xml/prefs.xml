@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+       <com.dalingrin.nookcolortweaks.SeekBarPreference android:defaultValue="0" android:key="dac_level"
+        android:dialogMessage="Warning: increasing DAC gain can lead to distortion or speaker damage"
+        android:title="DAC boost" android:max="48" android:summary="Globally change volume"/>
+       <com.dalingrin.nookcolortweaks.SeekBarPreference android:summary="Independent external speaker volume"
+        android:defaultValue="0" android:max="127"
+        android:key="spkr_analog_gain" android:title="External Speaker Analog Gain"/>
+       <com.dalingrin.nookcolortweaks.SeekBarPreference 
+       	android:defaultValue="0" android:title="Headphone analog gain" android:summary="Independent headphone analog gain" android:key="hp_analog_gain" android:max="127"/>
+       <CheckBoxPreference android:title="Set on boot" android:key="set_on_boot"></CheckBoxPreference>
+       <Preference android:title="Hints:" android:summary="You may need to increase DAC volume to get the external speaker louder. To eliminate headphone hiss/noise, decrease headphone analog gain until you can turn up the Android media volume to at least 80% and still maintain comfortable listening levels."></Preference>
+       <Preference android:title="App by Dalingrin" android:summary="Donate to Dalingrin" android:key="donate"></Preference>
+       <Preference android:title="Artwork by Shift" android:summary="Donate to Shift" android:key="shift"></Preference>
+</PreferenceScreen>

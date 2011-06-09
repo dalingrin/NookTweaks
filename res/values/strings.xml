@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Nook Tweaks</string>
+    <string name="mixer_bin">alsa_amixer</string>
+    <string name="get_control_contents">sget</string>
+    <string name="set_control_contents">sget</string>
+</resources>
