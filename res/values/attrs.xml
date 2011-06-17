@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<declare-styleable name="SeekBarPreference">
+<attr name="min" format="integer"></attr>
+<attr name="stepSize" format="integer"></attr>
+<attr name="showText" format="boolean"></attr>
+<attr name="delayedSet" format="boolean"></attr>
+</declare-styleable>
+</resources>

@@ -4,6 +4,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,24 +14,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.dalingrin.nookcolortweaks.dac3100.DAC3100sysfs;
-import com.dalingrin.nookcolortweaks.dac3100.DAC3100sysfs.GainType;
+import com.dalingrin.nookcolortweaks.sysfs.*;
+import com.dalingrin.nookcolortweaks.sysfs.AudioSysfs.GainType;
 
 public class PrefsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	private static final String TAG = "NookColorTweaks";
 	SharedPreferences pref;
 	
 	  @Override
-	  protected void onCreate(Bundle savedInstanceState) { // 
+	  protected void onCreate(Bundle savedInstanceState) { 
 	    super.onCreate(savedInstanceState);
-	    addPreferencesFromResource(R.xml.prefs); //
+	    addPreferencesFromResource(R.xml.prefs); 
 	    
-	    if(!DAC3100sysfs.isKernelCompat()) {
-	    	AlertDialog.Builder notCompatDialog = new AlertDialog.Builder(this);
-	    	notCompatDialog.setMessage("Kernel is not compatible. A newer build of CM7 or Dalingrin's overclock kernel is required");
-	    	notCompatDialog.setNeutralButton("Ok", null);
-	    	notCompatDialog.show();
-	    }
+	    compatibilityChecks();
 
 	    pref = PreferenceManager.getDefaultSharedPreferences(this);
 	    
@@ -66,39 +62,118 @@ public class PrefsActivity extends PreferenceActivity implements OnSharedPrefere
 	  }
 	  
 	  public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		  Log.i(TAG, "Key: " + key);
 		  if (key != null) {
 			  if (key.equals(GainType.dac_level.toString())) {
 				  int level = prefs.getInt(key, -1);
 				  
 				  if (level >= 0)
-					  DAC3100sysfs.setGain(GainType.dac_level ,level);
+					  Sysfs.write(new AudioSysfs(GainType.dac_level, level));
 				  else
 					  Log.i(TAG, "Invalid DAC level: " + level);
 			  } else if (key.equals(GainType.spkr_analog_gain.toString())) {
 				  int gain = prefs.getInt(key, -1);
 				  
 				  if (gain >= 0)
-					  DAC3100sysfs.setGain(GainType.spkr_analog_gain, 255 - gain);
+					  Sysfs.write(new AudioSysfs(GainType.spkr_analog_gain, 255 - gain));
 				  else
 					  Log.i(TAG, "Invalid speaker gain: " + gain);
 			  } else if (key.equals(GainType.hp_analog_gain.toString())) {
 				  int gain = prefs.getInt(key, -1);
 				  
 				  if (gain >= 0)
-					  DAC3100sysfs.setGain(GainType.hp_analog_gain, 255 - gain);
+					  Sysfs.write(new AudioSysfs(GainType.hp_analog_gain, 255 - gain));
 				  else
 					  Log.i(TAG, "Invalid hp gain: " + gain);
-			  } 
+			  } else if (key.equals("mpu_opp1")) {
+				  int freq = prefs.getInt(key, 300);
+				  Sysfs.write(new CPUSysfs(1, freq));
+			  } else if (key.equals("mpu_opp2")) {
+				  int freq = prefs.getInt(key, 600);
+				  Sysfs.write(new CPUSysfs(2, freq));
+			  } else if (key.equals("mpu_opp3")) {
+				  int freq = prefs.getInt(key, 800);
+				  Sysfs.write(new CPUSysfs(3, freq));
+			  } else if (key.equals("mpu_opp4")) {
+				  int freq = prefs.getInt(key, 925);
+				  Sysfs.write(new CPUSysfs(4, freq));
+			  } else if (key.equals("mpu_opp5")) {
+				  int freq = prefs.getInt(key, 925);
+				  Sysfs.write(new CPUSysfs(5, freq));
+			  }
 		  }
 	  }
 	  
 	  private void setInitalSettings() {
 		  Editor editor = pref.edit();
-		  editor.putInt(GainType.dac_level.toString(), 0);
-		  editor.putInt(GainType.hp_analog_gain.toString(), 255 - DAC3100sysfs.read_level(GainType.hp_analog_gain));
-		  editor.putInt(GainType.spkr_analog_gain.toString(), 255 - DAC3100sysfs.read_level(GainType.spkr_analog_gain));
-		  editor.putBoolean("appInitialized", true);
+		  try {
+			  if(AudioSysfs.isKernelCompat()) {
+				  editor.putInt(GainType.dac_level.toString(), 0);
+				  editor.putInt(GainType.hp_analog_gain.toString(),
+						  255 - Integer.parseInt(Sysfs.read(new AudioSysfs(GainType.hp_analog_gain, 0))));
+				  editor.putInt(GainType.spkr_analog_gain.toString(),
+						  255 - Integer.parseInt(Sysfs.read(new AudioSysfs(GainType.spkr_analog_gain, 0))));
+			  }
+			  if(CPUSysfs.isKernelCompat()) {
+				  editor.putInt("mpu_opp1", Integer.parseInt(Sysfs.read(new CPUSysfs(1, 0))));
+				  editor.putInt("mpu_opp2", Integer.parseInt(Sysfs.read(new CPUSysfs(2, 0))));
+				  editor.putInt("mpu_opp3", Integer.parseInt(Sysfs.read(new CPUSysfs(3, 0))));
+				  editor.putInt("mpu_opp4", Integer.parseInt(Sysfs.read(new CPUSysfs(4, 0))));
+				  editor.putInt("mpu_opp5", Integer.parseInt(Sysfs.read(new CPUSysfs(5, 0))));
+				  editor.putBoolean("appInitialized", true);
+			  }
+		  } catch (NumberFormatException nfe) {
+			  AlertDialog.Builder notCompatDialog = new AlertDialog.Builder(this);
+			  notCompatDialog.setMessage("Unable to establish initial settings");
+			  notCompatDialog.setNeutralButton("Ok", null);
+			  notCompatDialog.show();
+		  }
+		  
+		  
 		  editor.commit();
+	  }	  
+	  
+	  private void compatibilityChecks() {
+		    if(!AudioSysfs.isKernelCompat()) {
+		    	//Remove CPU preferences due to no kernel support
+		    	PreferenceScreen cpuPrefs = (PreferenceScreen) findPreference("audio_settings");
+		    	cpuPrefs.removeAll();
+		    	
+		    	//If you clicks on CPU preference screen then show warning
+		    	cpuPrefs.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+		            public boolean onPreferenceClick(Preference preference) {
+		            	showKernelNotCompatCPU("Audio");
+		            	return false;
+		            }
+		    	});
+		    }	 
+		    if(!CPUSysfs.isKernelCompat()) {
+		    	//Remove CPU preferences due to no kernel support
+		    	PreferenceScreen cpuPrefs = (PreferenceScreen) findPreference("cpu_settings");
+		    	cpuPrefs.removeAll();
+		    	
+		    	//If you clicks on CPU preference screen then show warning
+		    	cpuPrefs.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+		            public boolean onPreferenceClick(Preference preference) {
+		            	showKernelNotCompatCPU("CPU");
+		            	return false;
+		            }
+		    	});
+		    }	    
 	  }
 	  
+	  private void showKernelNotCompatCPU(String settings) {
+		  StringBuilder sb = new StringBuilder("Kernel is not compatible with ");
+		  sb.append(settings);
+		  sb.append(" settings.\n");
+		  if(settings.equalsIgnoreCase("audio"))
+			  sb.append("A newer build of CM7 or Dalingrin's overclock kernel is required");
+		  else if(settings.equalsIgnoreCase("cpu")) 
+			  sb.append("A newer build of Dalingrin's overclock kernel is required");
+		  
+		  AlertDialog.Builder notCompatDialog = new AlertDialog.Builder(this);
+		  notCompatDialog.setMessage(sb);
+		  notCompatDialog.setNeutralButton("Ok", null);
+		  notCompatDialog.show();
+	  }
 }

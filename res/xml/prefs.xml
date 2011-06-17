@@ -1,15 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-       <com.dalingrin.nookcolortweaks.SeekBarPreference android:defaultValue="0" android:key="dac_level"
-        android:dialogMessage="Warning: increasing DAC gain can lead to distortion or speaker damage"
-        android:title="DAC boost" android:max="48" android:summary="Globally change volume"/>
-       <com.dalingrin.nookcolortweaks.SeekBarPreference android:summary="Independent external speaker volume"
-        android:defaultValue="0" android:max="127"
-        android:key="spkr_analog_gain" android:title="External Speaker Analog Gain"/>
-       <com.dalingrin.nookcolortweaks.SeekBarPreference 
-       	android:defaultValue="0" android:title="Headphone analog gain" android:summary="Independent headphone analog gain" android:key="hp_analog_gain" android:max="127"/>
-       <CheckBoxPreference android:title="Set on boot" android:key="set_on_boot"></CheckBoxPreference>
-       <Preference android:title="Hints:" android:summary="You may need to increase DAC volume to get the external speaker louder. To eliminate headphone hiss/noise, decrease headphone analog gain until you can turn up the Android media volume to at least 80% and still maintain comfortable listening levels."></Preference>
-       <Preference android:title="App by Dalingrin" android:summary="Donate to Dalingrin" android:key="donate"></Preference>
-       <Preference android:title="Artwork by Shift" android:summary="Donate to Shift" android:key="shift"></Preference>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:dalingrin="http://schemas.android.com/apk/res/com.dalingrin.nookcolortweaks">
+       <PreferenceScreen android:title="Audio Settings" android:summary="Adjust speaker and headphone volume" android:key="audio_settings">
+	       <com.dalingrin.nookcolortweaks.SeekBarPreference 
+	       		android:dialogMessage="Warning: increasing DAC gain can lead to distortion or speaker damage"
+	        	android:title="DAC boost" android:defaultValue="0" 
+	        	android:summary="Globally change volume" android:key="dac_level" android:max="48" dalingrin:showText="false"/>
+	       <com.dalingrin.nookcolortweaks.SeekBarPreference 
+	       		android:summary="Independent external speaker volume" android:defaultValue="0"
+	       		android:max="127" android:key="spkr_analog_gain"
+	       		android:title="External Speaker Analog Gain" dalingrin:showText="false"/>
+	       <com.dalingrin.nookcolortweaks.SeekBarPreference 
+	       		android:defaultValue="0" android:title="Headphone analog gain"
+	       		android:summary="Independent headphone analog gain" android:key="hp_analog_gain"
+	       		android:max="127" dalingrin:showText="false"/>
+	       <CheckBoxPreference android:title="Set on boot" android:key="audio_set_on_boot"></CheckBoxPreference>
+	       <Preference android:title="Hints:" android:summary="You may need to increase DAC volume to get the external speaker louder. To eliminate headphone hiss/noise, decrease headphone analog gain until you can turn up the Android media volume to at least 80% and still maintain comfortable listening levels."></Preference>
+       </PreferenceScreen>
+       <PreferenceScreen android:title="CPU Settings" android:summary="Adjust CPU clock frequency" android:key="cpu_settings">
+	       <Preference android:title="CPU Clock Frequency Settings:" android:summary="Customize the clock speed at each stepping available. Note: Higher steppings have higher voltage and are more likely to be stable at higher frequencies."></Preference>
+	       <com.dalingrin.nookcolortweaks.SeekBarPreference 
+		       	android:summary="Lowest clock frequency" android:title="CPU Stepping 1" 
+		       	android:key="mpu_opp1" dalingrin:min="100" android:max="600" android:defaultValue="0" android:text="mhz" dalingrin:stepSize="25" dalingrin:delayedSet="true"/>
+		   <com.dalingrin.nookcolortweaks.SeekBarPreference 
+		       	android:summary="Clock frequency for stepping 2" android:title="CPU Stepping 2" 
+		       	android:key="mpu_opp2" dalingrin:min="100" android:max="1000" android:defaultValue="0" android:text="mhz" dalingrin:stepSize="25" dalingrin:delayedSet="true"/>
+		   <com.dalingrin.nookcolortweaks.SeekBarPreference 
+		       	android:summary="Clock frequency for stepping 3" android:title="CPU Stepping 3" 
+		       	android:key="mpu_opp3" dalingrin:min="100" android:max="1200" android:defaultValue="0" android:text="mhz" dalingrin:stepSize="25" dalingrin:delayedSet="true"/>
+		   <com.dalingrin.nookcolortweaks.SeekBarPreference 
+		       	android:summary="Clock frequency for stepping 4" android:title="CPU Stepping 4" 
+		       	android:key="mpu_opp4" dalingrin:min="100" android:max="1400" android:defaultValue="0" android:text="mhz" dalingrin:stepSize="25" dalingrin:delayedSet="true"/>
+		   <com.dalingrin.nookcolortweaks.SeekBarPreference 
+		       	android:summary="Highest clock frequency" android:title="CPU Stepping 5" 
+		       	android:key="mpu_opp5" dalingrin:min="100" android:max="1500" android:defaultValue="0" android:text="mhz" dalingrin:stepSize="25" dalingrin:delayedSet="true"/>
+		   <CheckBoxPreference android:title="Set on boot" android:key="cpu_set_on_boot"></CheckBoxPreference>
+       </PreferenceScreen>
+       <Preference android:title="Donate to Dalingrin" android:summary="App by Dalingrin" android:key="donate"></Preference>
+	   <Preference android:title="Donate to Shift" android:summary="Artwork by Shift" android:key="shift"></Preference>
+	   <Preference android:title="Nook Tweaks" android:summary="v1.1.4"></Preference>
 </PreferenceScreen>

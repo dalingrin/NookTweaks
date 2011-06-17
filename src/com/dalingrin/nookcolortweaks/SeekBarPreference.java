@@ -1,13 +1,16 @@
 package com.dalingrin.nookcolortweaks;
 
-/* The following code was written by Matthew Wiggins 
+/* The following code was written by Matthew Wiggins and extended by Erik Hardesty
  * and is released under the APACHE 2.0 license 
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,17 +28,28 @@ public class SeekBarPreference extends DialogPreference implements
 	private Context mContext;
 
 	private String mDialogMessage, mSuffix;
-	private int mDefault, mMax, mValue = 0;
+	private int mDefault, mMin, mMax, mValue, mStepSize = 0;
+	private boolean mShowText, mDelayedSet = false;
 
 	public SeekBarPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mContext = context;
-
+		
+		TypedArray ta = context.obtainStyledAttributes(attrs,
+				R.styleable.SeekBarPreference);
+		
 		mDialogMessage = attrs.getAttributeValue(androidns, "dialogMessage");
 		mSuffix = attrs.getAttributeValue(androidns, "text");
 		mDefault = attrs.getAttributeIntValue(androidns, "defaultValue", 0);
+		mMin = ta.getInteger(R.styleable.SeekBarPreference_min, 0);
 		mMax = attrs.getAttributeIntValue(androidns, "max", 100);
-
+		mStepSize = ta.getInteger(R.styleable.SeekBarPreference_stepSize, 0);
+		mShowText = ta.getBoolean(R.styleable.SeekBarPreference_showText, true);
+		mDelayedSet = ta.getBoolean(R.styleable.SeekBarPreference_delayedSet, false);
+		
+		
+		if(mDefault < mMin)
+			mDefault = mMin;
 	}
 
 	@Override
@@ -50,24 +64,28 @@ public class SeekBarPreference extends DialogPreference implements
 			mSplashText.setText(mDialogMessage);
 		layout.addView(mSplashText);
 
-		// mValueText = new TextView(mContext);
-		// mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
-		// mValueText.setTextSize(32);
+		mValueText = new TextView(mContext);
+		mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
+		mValueText.setTextSize(32);
 		params = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.FILL_PARENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT);
-		// layout.addView(mValueText, params);
+		if (mShowText)
+			layout.addView(mValueText, params);
 
 		mSeekBar = new SeekBar(mContext);
 		mSeekBar.setOnSeekBarChangeListener(this);
+		mSeekBar.setKeyProgressIncrement(mStepSize);
 		layout.addView(mSeekBar, new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.FILL_PARENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT));
 
-		if (shouldPersist())
-			mValue = getPersistedInt(mDefault);
+		if (shouldPersist()) {
+			mValue = getPersistedInt(mDefault) - mMin;
+			Log.i("NookColorTweaks", "Persist! " + mValue);
+		}
 
-		mSeekBar.setMax(mMax);
+		mSeekBar.setMax(mMax - mMin);
 		mSeekBar.setProgress(mValue);
 		return layout;
 	}
@@ -77,6 +95,16 @@ public class SeekBarPreference extends DialogPreference implements
 		super.onBindDialogView(v);
 		mSeekBar.setMax(mMax);
 		mSeekBar.setProgress(mValue);
+	}
+	
+	@Override 
+	protected void onDialogClosed (boolean positiveResult) {
+		if (mDelayedSet && positiveResult) {
+			Log.i("NookTweaks", "value:" + mValue);
+			if (shouldPersist())
+				persistInt(mValue + mMin);
+			callChangeListener(mValue + mMin);
+		}
 	}
 
 	@Override
@@ -89,17 +117,33 @@ public class SeekBarPreference extends DialogPreference implements
 	}
 
 	public void onProgressChanged(SeekBar seek, int value, boolean fromTouch) {
-		String t = String.valueOf(value);
-		//mValueText.setText(mSuffix == null ? t : t.concat(mSuffix));
-		if (shouldPersist())
-			persistInt(value);
-		callChangeListener(new Integer(value));
+		if(mStepSize > 1) 
+			value = Math.round(value/mStepSize)*mStepSize;
+
+		String t = String.valueOf(value + mMin);
+		if (mShowText) 
+			mValueText.setText(mSuffix == null ? t : t.concat(mSuffix));
+		
+		if (!mDelayedSet) {
+			if (shouldPersist())
+				persistInt(value + mMin);
+			callChangeListener(new Integer(value));
+		} else if (fromTouch)
+			mValue = value;
 	}
 
 	public void onStartTrackingTouch(SeekBar seek) {
 	}
 
 	public void onStopTrackingTouch(SeekBar seek) {
+	}
+	
+	public void setMin(int min) {
+		mMin = min;
+	}
+	
+	public int getMin() {
+		return mMin;
 	}
 
 	public void setMax(int max) {
@@ -108,6 +152,14 @@ public class SeekBarPreference extends DialogPreference implements
 
 	public int getMax() {
 		return mMax;
+	}
+	
+	public void setStepSize(int stepSize) {
+		mStepSize = stepSize;
+	}
+	
+	public int getStepSize() {
+		return mStepSize;
 	}
 
 	public void setProgress(int progress) {
