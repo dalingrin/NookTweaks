@@ -1,5 +1,8 @@
 package com.dalingrin.nookcolortweaks;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
@@ -14,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.dalingrin.nookcolortweaks.romfs.*;
 import com.dalingrin.nookcolortweaks.sysfs.*;
 import com.dalingrin.nookcolortweaks.sysfs.AudioSysfs.GainType;
 
@@ -27,14 +31,16 @@ public class PrefsActivity extends PreferenceActivity implements OnSharedPrefere
 	    addPreferencesFromResource(R.xml.prefs); 
 	    
 	    compatibilityChecks();
-
+	    
 	    pref = PreferenceManager.getDefaultSharedPreferences(this);
 	    
 	    if(!pref.contains("appInitialized")) {
 	    	Log.i(TAG, "first run detected");
 	    	setInitalSettings();
 	    }
-	    
+
+	    initBootSettings();
+
 	    pref.registerOnSharedPreferenceChangeListener(this);
 	    
 	    Preference myPref = (Preference) findPreference("donate");
@@ -58,7 +64,7 @@ public class PrefsActivity extends PreferenceActivity implements OnSharedPrefere
             	return false;
             }
         });
-	    
+
 	  }
 	  
 	  public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -100,9 +106,46 @@ public class PrefsActivity extends PreferenceActivity implements OnSharedPrefere
 			  } else if (key.equals("mpu_opp5")) {
 				  int freq = prefs.getInt(key, 925);
 				  Sysfs.write(new CPUSysfs(5, freq));
+			  } else if (key.equals("boot_device")) {
+				  boolean value = prefs.getBoolean(key, false);
+				  if (value) {Romfs.write(new DeviceRomfs("u-boot.device", "1")); }
+				  else {Romfs.delete(new DeviceRomfs("u-boot.device", "0")); }
+			   } else if (key.equals("boot_alt")) {
+				  boolean value = prefs.getBoolean(key, false);
+				  if (value) {Romfs.write(new DeviceRomfs("u-boot.altboot", "1")); }
+				  else {Romfs.delete(new DeviceRomfs("u-boot.altboot", "0")); }
 			  }
 		  }
 	  }
+
+	  private void initBootSettings() {
+		  Editor editor = pref.edit();
+		  String dev = Romfs.read(new DeviceRomfs("u-boot.device", "0"));
+		  String ab = Romfs.read(new DeviceRomfs("u-boot.altboot", "0"));
+		  Log.i(TAG, "Read u-boot.device file  : " + dev);
+		  Log.i(TAG, "Read u-boot.altboot file : " + ab);
+		  if (dev.startsWith("1"))
+		  	{
+			  	editor.putBoolean("boot_device", true);
+
+			  	Log.i(TAG, "setting boot pref device to true");
+		  	}
+		  else {
+			  	editor.putBoolean("boot_device", false);
+			  	Log.i(TAG, "setting boot pref device to false");
+			  }
+		  if (ab.startsWith("1"))
+		  {
+		  	editor.putBoolean("boot_alt", true);
+		  	Log.i(TAG, "setting alt boot pref to true");
+		  }
+	  else {
+		  	editor.putBoolean("boot_alt", false);
+		  	Log.i(TAG, "setting alt boot pref to false");
+		  }
+		  editor.commit();
+
+}
 	  
 	  private void setInitalSettings() {
 		  Editor editor = pref.edit();
