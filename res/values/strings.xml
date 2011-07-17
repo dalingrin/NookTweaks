@@ -4,4 +4,6 @@
     <string name="mixer_bin">alsa_amixer</string>
     <string name="get_control_contents">sget</string>
     <string name="set_control_contents">sget</string>
+    <string name="usb_storage_path">/mnt/usbdisk</string>
+    <string name="version_id">1.4.3</string>
 </resources>

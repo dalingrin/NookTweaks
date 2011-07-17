@@ -82,7 +82,7 @@ public class SeekBarPreference extends DialogPreference implements
 
 		if (shouldPersist()) {
 			mValue = getPersistedInt(mDefault) - mMin;
-			Log.i("NookColorTweaks", "Persist! " + mValue);
+			Log.i("SeekBarPreference", "Persist! " + (mValue + mMin));
 		}
 
 		mSeekBar.setMax(mMax - mMin);
@@ -100,10 +100,15 @@ public class SeekBarPreference extends DialogPreference implements
 	@Override 
 	protected void onDialogClosed (boolean positiveResult) {
 		if (mDelayedSet && positiveResult) {
-			Log.i("NookTweaks", "value:" + mValue);
-			if (shouldPersist())
-				persistInt(mValue + mMin);
+			Log.i("SeekBarPreference", "value:" + (mValue + mMin));
 			callChangeListener(mValue + mMin);
+			
+			if (shouldPersist()) {
+				//Ugly workaround for the cases when the value accepted is 
+				//not changed from persistent value but should still signal a change
+				persistInt(mValue + mMin + 1);
+				persistInt(mValue + mMin);
+			}			
 		}
 	}
 

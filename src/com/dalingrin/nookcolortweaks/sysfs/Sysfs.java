@@ -15,12 +15,7 @@ public class Sysfs {
 				bw.write(obj.getValue());
 				bw.close();
 			} else {
-				String su = "/system/xbin/su";
-				File suFile = new File(su);
-				if (!suFile.exists())
-					su = "/system/bin/su";
-					
-				Process p = Runtime.getRuntime().exec(su);
+				Process p = Runtime.getRuntime().exec("su");
 				
 				DataOutputStream dos = new DataOutputStream(p.getOutputStream());
 				dos.writeBytes("echo " + obj.getValue() + " > " + obj.getFile() + "\n");
@@ -36,6 +31,7 @@ public class Sysfs {
 		} catch (InterruptedException e) {
 			Log.i(TAG, "Error writing with root permission");
 			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}
@@ -47,7 +43,7 @@ public class Sysfs {
 			value = br.readLine();
 			br.close();
 		} catch (IOException ex) {
-			return "Invalid";
+			return "-1";
 		}
 		return value;
 	}

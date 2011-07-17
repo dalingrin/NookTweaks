@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:layout_gravity="top" android:paddingBottom="10dip" android:paddingTop="10dip">
+    <LinearLayout android:id="@+id/LinearLayout02" android:layout_width="match_parent" android:layout_height="wrap_content" android:baselineAligned="true">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Stepping 1" android:layout_weight="1" android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/TextViewStepping" android:paddingLeft="10dip"></TextView>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Stock Voltage: " android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/TextLabelStockVolt"></TextView>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1.30v" android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/TextStockVolt" android:paddingRight="10dip"></TextView>
+    </LinearLayout>
+    <LinearLayout android:id="@+id/LinearLayout01" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:text="TextView" android:layout_weight="1" android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/TextViewVolt"></TextView>
+        <SeekBar android:layout_width="match_parent" android:layout_height="wrap_content" android:max="25" android:id="@+id/SeekBarVolt" android:paddingRight="20dip" android:paddingLeft="20dip"></SeekBar>
+    </LinearLayout>
+</LinearLayout>
+
+

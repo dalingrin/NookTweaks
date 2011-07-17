@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="Save and Apply" android:id="@+id/apply" android:icon="@drawable/saveicon"></item>
+    <item android:title="Set On Boot" android:id="@+id/set_on_boot" android:icon="@drawable/booticon"></item>
+    <item android:title="Reset All" android:id="@+id/reset" android:icon="@drawable/undoicon"></item>
+    
+</menu>

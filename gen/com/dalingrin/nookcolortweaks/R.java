@@ -43,16 +43,38 @@ containing a value of this type.
         public static final int stepSize=0x7f010001;
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
+        public static final int booticon=0x7f020000;
+        public static final int border=0x7f020001;
+        public static final int icon=0x7f020002;
+        public static final int saveicon=0x7f020003;
+        public static final int undoicon=0x7f020004;
+    }
+    public static final class id {
+        public static final int LinearLayout01=0x7f070004;
+        public static final int LinearLayout02=0x7f070000;
+        public static final int SeekBarVolt=0x7f070006;
+        public static final int TextLabelStockVolt=0x7f070002;
+        public static final int TextStockVolt=0x7f070003;
+        public static final int TextViewStepping=0x7f070001;
+        public static final int TextViewVolt=0x7f070005;
+        public static final int apply=0x7f070007;
+        public static final int reset=0x7f070009;
+        public static final int set_on_boot=0x7f070008;
     }
     public static final class layout {
         public static final int main=0x7f030000;
+        public static final int voltage=0x7f030001;
+    }
+    public static final class menu {
+        public static final int voltmenu=0x7f060000;
     }
     public static final class string {
         public static final int app_name=0x7f050000;
         public static final int get_control_contents=0x7f050002;
         public static final int mixer_bin=0x7f050001;
         public static final int set_control_contents=0x7f050003;
+        public static final int usb_storage_path=0x7f050004;
+        public static final int version_id=0x7f050005;
     }
     public static final class xml {
         public static final int prefs=0x7f040000;

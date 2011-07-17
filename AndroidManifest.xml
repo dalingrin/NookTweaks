@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.dalingrin.nookcolortweaks"
-      android:versionCode="8"
-      android:versionName="1.1.4">
+      android:versionName="@string/version_id" android:versionCode="19">
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
       <application android:icon="@drawable/icon" android:label="@string/app_name">
-      	<activity android:name=".PrefsActivity" android:label="@string/app_name">
+      	<activity android:name=".PrefsActivity" android:label="@string/app_name" android:launchMode="singleInstance">
       		<intent-filter>
       			<action android:name="android.intent.action.MAIN" />
       			<category android:name="android.intent.category.LAUNCHER" />
       		</intent-filter>
+      	</activity>
+      	<activity android:name=".VoltageActivity" android:label="@string/app_name">
       	</activity>
       	<receiver android:name=".BootReceiver">
   			<intent-filter>
     			<action android:name="android.intent.action.BOOT_COMPLETED" />
   			</intent-filter>
 		</receiver>
+		<receiver android:name=".MediaChangedReceiver">
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED" />
+				<action android:name="android.intent.action.MEDIA_REMOVED" />
+				<action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+				<data android:scheme="file" />
+			</intent-filter> 
+		</receiver>
+		<activity android:name=".VoltageConfirmationActivity" android:label="@string/app_name" android:theme="@android:style/Theme.Translucent.NoTitleBar">
+		</activity>
       </application>
     <uses-sdk android:minSdkVersion="8" />
 

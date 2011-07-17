@@ -17,12 +17,7 @@ public class Romfs {
 				bw.write(obj.getValue());
 				bw.close();
 			} else {
-				String su = "/system/xbin/su";
-				File suFile = new File(su);
-				if (!suFile.exists())
-					su = "/system/bin/su";
-					
-				Process p = Runtime.getRuntime().exec(su);
+				Process p = Runtime.getRuntime().exec("su");
 				
 				DataOutputStream dos = new DataOutputStream(p.getOutputStream());
 				dos.writeBytes("echo " + obj.getValue() + " > " + obj.getFile());
@@ -42,36 +37,32 @@ public class Romfs {
 	}
 	
 	public static String read(RomfsObj obj) {
-		String value;
+		String value = null;
 		try {
 			File test = new File(obj.getFile());
-			if (test.canRead()){
-				Log.i(TAG, "Reading " + obj.getFile() + " without root.");
-				BufferedReader br = new BufferedReader(new FileReader(obj.getFile()));
-				value = br.readLine();
-				br.close();
-		    }
-			 else {
-				    Log.i(TAG, "Reading " + obj.getFile() + " with root.");
-					String su = "/system/xbin/su";
-					File suFile = new File(su);
-					if (!suFile.exists())
-						su = "/system/bin/su";
-						
-					Process p = Runtime.getRuntime().exec(su);
-
-					DataOutputStream dos = new DataOutputStream(p.getOutputStream());
-					DataInputStream dosin = new DataInputStream(p.getInputStream());
-				//	make sure file exists before reading
-					dos.writeBytes("if [ -f " + obj.getFile() + " ]; then cat " + obj.getFile() + "; else echo \"0\"; fi\n");
-					value =  dosin.readLine();
-					dos.flush();
-					dos.close();
-					dosin.close();
-
-					if(p.waitFor() != 0)
-					  Log.i(TAG, "Could not read from " + obj.getFile());
-				 } 
+			if (test.exists()) {
+				if (test.canRead()) {
+					Log.i(TAG, "Reading " + obj.getFile() + " without root.");
+					BufferedReader br = new BufferedReader(new FileReader(obj.getFile()));
+					value = br.readLine();
+					br.close();
+			     } else {
+					    Log.i(TAG, "Reading " + obj.getFile() + " with root.");						
+						Process p = Runtime.getRuntime().exec("su");
+	
+						DataOutputStream dos = new DataOutputStream(p.getOutputStream());
+						DataInputStream dosin = new DataInputStream(p.getInputStream());
+					//	make sure file exists before reading
+						dos.writeBytes("if [ -f " + obj.getFile() + " ]; then cat " + obj.getFile() + "; else echo \"0\"; fi\n");
+						value =  dosin.readLine();
+						dos.flush();
+						dos.close();
+						dosin.close();
+	
+						if(p.waitFor() != 0)
+						  Log.i(TAG, "Could not read from " + obj.getFile());
+				}
+			}
 		} catch (IOException ex) {
 			Log.i(TAG, "IO exception, such as file not found.  This is okay.");
 			value = "0";

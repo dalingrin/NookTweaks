@@ -32,4 +32,9 @@ public class CPUSysfs extends SysfsObj {
 		
 		return true;
 	}
+	
+	public static boolean isOCKernel() {
+		File mpuFile = new File(CPU_DIR + "mpu_freq_opp5");
+		return mpuFile.exists();
+	}
 }

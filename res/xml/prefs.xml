@@ -16,29 +16,40 @@
 	       <CheckBoxPreference android:title="Set on boot" android:key="audio_set_on_boot"></CheckBoxPreference>
 	       <Preference android:title="Hints:" android:summary="You may need to increase DAC volume to get the external speaker louder. To eliminate headphone hiss/noise, decrease headphone analog gain until you can turn up the Android media volume to at least 80% and still maintain comfortable listening levels."></Preference>
        </PreferenceScreen>
-       <PreferenceScreen android:title="CPU Settings" android:summary="Adjust CPU clock frequency" android:key="cpu_settings">
-	       <Preference android:title="CPU Clock Frequency Settings:" android:summary="Customize the clock speed at each stepping available. Note: Higher steppings have higher voltage and are more likely to be stable at higher frequencies."></Preference>
-	       <com.dalingrin.nookcolortweaks.SeekBarPreference 
-		       	dalingrin:min="100" dalingrin:delayedSet="true" android:max="600" android:title="CPU Stepping 1" dalingrin:stepSize="25" android:key="mpu_opp1" android:summary="Lowest clock frequency" android:defaultValue="0" android:text="mhz"/>
-		   <com.dalingrin.nookcolortweaks.SeekBarPreference 
-		       	android:title="CPU Stepping 2" dalingrin:min="100" android:max="1000" dalingrin:stepSize="25" android:summary="Clock frequency for stepping 2" android:text="mhz" android:defaultValue="0" dalingrin:delayedSet="true" android:key="mpu_opp2"/>
-		   <com.dalingrin.nookcolortweaks.SeekBarPreference 
-		       	android:summary="Clock frequency for stepping 3" android:title="CPU Stepping 3" 
-		       	android:key="mpu_opp3" dalingrin:min="100" android:max="1200" android:defaultValue="0" android:text="mhz" dalingrin:stepSize="25" dalingrin:delayedSet="true"/>
-		   <com.dalingrin.nookcolortweaks.SeekBarPreference 
-		       	android:summary="Clock frequency for stepping 4" dalingrin:delayedSet="true" android:text="mhz" android:key="mpu_opp4" android:title="CPU Stepping 4" dalingrin:min="100" android:defaultValue="0" dalingrin:stepSize="25" android:max="1400"/>
-		   <com.dalingrin.nookcolortweaks.SeekBarPreference 
-		       	android:summary="Highest clock frequency" dalingrin:stepSize="25" android:text="mhz" android:max="1500" android:defaultValue="0" dalingrin:min="100" android:key="mpu_opp5" android:title="CPU Stepping 5" dalingrin:delayedSet="true"/>
-		   <CheckBoxPreference android:title="Set on boot" android:key="cpu_set_on_boot"></CheckBoxPreference>
+       <PreferenceScreen android:key="boot_settings" android:title="Boot Settings" android:summary="Adjust default boot behavior"><CheckBoxPreference android:key="boot_device" android:title="Always Boot from eMMC" android:summary="Select to make internal eMMC the preferred boot device"></CheckBoxPreference> 
+          <CheckBoxPreference android:key="boot_alt" android:summary="Select to boot from uAltImg/uAltRam" android:title="Always Use Alternate Boot"></CheckBoxPreference>
+          <Preference android:title="Hints:" android:summary='"Always Boot from eMMC" requires a compatible u-boot.bin file (with the Cyanogenmod logo) on the first partition (/boot) of the SD card.  "Use Alternate Boot" requires a kernel (uAltImg) and ramdisk (uAltRam) on the first partition (/boot) of your boot device.'></Preference><Preference android:summary="When booting, hold down:\nn --&gt; start boot menu\nn + power --&gt; recovery boot\nvolume ↑ + volume ↓ --&gt; alternate boot" android:title="Button Shortcuts:"></Preference>
        </PreferenceScreen>
-       <PreferenceScreen android:key="boot_settings" android:title="Boot Settings" android:summary="Adjust default boot behavior"><CheckBoxPreference android:key="boot_device" android:title="Always Boot from eMMC" android:summary="Select to make internal eMMC the preferred boot device"></CheckBoxPreference>
-       
-       <CheckBoxPreference android:key="boot_alt" android:summary="Select to boot from uAltImg/uAltRam" android:title="Always Use Alternate Boot"></CheckBoxPreference>
-       <Preference android:title="Hints:" android:summary='"Always Boot from eMMC" requires a compatible u-boot.bin file (with the Cyanogenmod logo) on the first partition (/boot) of the SD card.  "Use Alternate Boot" requires a kernel (uAltImg) and ramdisk (uAltRam) on the first partition (/boot) of your boot device.'></Preference><Preference android:summary="When booting, hold down:\nn --&gt; start boot menu\nn + power --&gt; recovery boot\nvolume ↑ + volume ↓ --&gt; alternate boot" android:title="Button Shortcuts:"></Preference>
-       
-</PreferenceScreen><Preference android:title="Donate to Dalingrin" android:summary="App by Dalingrin" android:key="donate"></Preference>
+       <PreferenceScreen android:title="CPU Settings" android:summary="Adjust CPU clock and voltage" android:key="cpu_settings">
+       	  <PreferenceScreen android:title="Clock Settings" android:summary="Adjust available CPU clock frequencies" android:key="cpu_clock_settings">
+		       <Preference android:summary="Customize the clock speed at each stepping available. Note: Higher steppings have higher voltage and are more likely to be stable at higher frequencies." android:title="CPU Clock Frequency Settings:"></Preference>
+		       <com.dalingrin.nookcolortweaks.SeekBarPreference 
+			       	android:max="600" android:key="mpu_opp1" dalingrin:delayedSet="true" dalingrin:min="100" android:text="mhz" dalingrin:stepSize="25" android:defaultValue="0" android:summary="Lowest clock frequency" android:title="CPU Stepping 1"/>
+			   <com.dalingrin.nookcolortweaks.SeekBarPreference 
+			       	android:title="CPU Stepping 2" dalingrin:min="100" android:max="1000" dalingrin:stepSize="25" android:summary="Clock frequency for stepping 2" android:text="mhz" android:defaultValue="0" dalingrin:delayedSet="true" android:key="mpu_opp2"/>
+			   <com.dalingrin.nookcolortweaks.SeekBarPreference 
+			       	android:summary="Clock frequency for stepping 3" android:title="CPU Stepping 3" 
+			       	android:key="mpu_opp3" dalingrin:min="100" android:max="1200" android:defaultValue="0" android:text="mhz" dalingrin:stepSize="25" dalingrin:delayedSet="true"/>
+			   <com.dalingrin.nookcolortweaks.SeekBarPreference 
+			       	android:summary="Clock frequency for stepping 4" dalingrin:delayedSet="true" android:text="mhz" android:key="mpu_opp4" android:title="CPU Stepping 4" dalingrin:min="100" android:defaultValue="0" dalingrin:stepSize="25" android:max="1400"/>
+			   <com.dalingrin.nookcolortweaks.SeekBarPreference 
+			       	android:summary="Highest clock frequency" dalingrin:stepSize="25" android:text="mhz" android:max="1500" android:defaultValue="0" dalingrin:min="100" android:key="mpu_opp5" android:title="CPU Stepping 5" dalingrin:delayedSet="true"/>
+			   <CheckBoxPreference android:title="Set on boot" android:key="cpu_set_on_boot"></CheckBoxPreference>
+		   </PreferenceScreen>
+		   <Preference android:title="Voltage Settings" android:summary="Adjust CPU voltages for each stepping" android:key="voltage_control"/>
+       </PreferenceScreen>
+       <PreferenceScreen android:key="display_settings" android:summary="Adjust display bit depth" android:title="Display Settings">
+       		<CheckBoxPreference android:key="32bpp" android:title="Enable 32 bit framebuffer" android:summary="Enable 32 bit framebuffer for higher image quality but slower performance"></CheckBoxPreference>
+       </PreferenceScreen>
+	   <PreferenceScreen android:title="USB Settings" android:key="usb_settings" android:summary="Manage USB host mode and device settings">
+	       <CheckBoxPreference android:title="USB Host mode" android:key="usbhost_mode" android:summary="Enable USB host mode to connect peripherals"></CheckBoxPreference>
+	       <CheckBoxPreference android:key="vbus_mode" android:summary="External VBus allows the Nook to both charge and host peripherals" android:title="External VBus"></CheckBoxPreference>
+	       <Preference android:title="Refresh" android:summary="Refresh USB settings" android:key="usb_refresh"></Preference>
+	   </PreferenceScreen><Preference android:title="Donate to Dalingrin" android:summary="App by Dalingrin" android:key="donate"></Preference>
 	   <Preference android:title="Donate to Shift" android:summary="Artwork by Shift" android:key="shift"></Preference>
-	   <Preference android:title="Nook Tweaks" android:summary="v1.1.4"></Preference>
+	   <Preference android:title="Nook Tweaks" android:summary="@string/version_id"></Preference>
+	   
+	   
 	   
 	   
 	   
